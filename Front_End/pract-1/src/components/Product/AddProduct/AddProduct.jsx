@@ -9,10 +9,11 @@ class AddProduct extends Component {
 		};
 	}
 
+	apiUrl = process.env.REACT_APP_BE_URL;
 	GetProduct = async () => {
 		try {
 			const request = await fetch(
-				`http://localhost:3001/products/${this.props.match.params.id}`
+				`${apiUrl}/products/${this.props.match.params.id}`
 			);
 			const response = await request.json();
 			this.setState({
@@ -25,7 +26,7 @@ class AddProduct extends Component {
 
 	AddProduct = async () => {
 		try {
-			await fetch("http://localhost:3001/products/", {
+			await fetch(`${apiUrl}/products/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -39,16 +40,13 @@ class AddProduct extends Component {
 
 	UpdateProduct = async () => {
 		try {
-			await fetch(
-				`http://localhost:3001/products/${this.props.match.params.id}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(this.state.product),
-				}
-			);
+			await fetch(`${apiUrl}/products/${this.props.match.params.id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(this.state.product),
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -56,7 +54,7 @@ class AddProduct extends Component {
 
 	AddFile = async () => {
 		try {
-			await fetch("http://localhost:3001/products/file", {
+			await fetch(`${apiUrl}/products/file`, {
 				method: "POST",
 				body: this.state.image,
 			});
@@ -89,7 +87,6 @@ class AddProduct extends Component {
 				this.AddProduct();
 			}
 		}
-		// window.location = "/product";
 	};
 
 	HandleSetting = () => {
@@ -115,7 +112,7 @@ class AddProduct extends Component {
 
 	handleInputImage = (event) => {
 		event.preventDefault();
-		const urlLink = "http://localhost:3001/";
+		const urlLink = `${apiUrl}`;
 		const id = event.target.id;
 		const file = event.target.files[0];
 		let form = new FormData();
@@ -204,13 +201,11 @@ class AddProduct extends Component {
 									placeholder="Enter product image url"
 								/>
 							</Form.Group>
-							{/* <Link to={`/product/`}> */}
 								<Button className="m-2" variant="primary" type="submit">
 									{this.props.match.params.id
 										? "Update Product"
 										: "Add Product"}
 								</Button>
-							{/* </Link> */}
 						</Form>
 					</Col>
 				</Row>

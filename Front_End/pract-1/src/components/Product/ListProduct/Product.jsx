@@ -9,9 +9,9 @@ class Product extends Component {
 			products: null,
 		};
 	}
-
+	apiUrl = process.env.REACT_APP_BE_URL;
 	Products = async () => {
-		const request = await fetch("http://localhost:3001/products/");
+		const request = await fetch(`${apiUrl}/products/`);
 		const response = await request.json();
 		this.setState({products: response});
 	};
@@ -24,7 +24,7 @@ class Product extends Component {
 		const local = () => "localhost:3001";
 		if (arr.some(local)) {
 			const image = arr[arr.length - 1];
-			await fetch(`http://localhost:3001/products/file/${image}`, {
+			await fetch(`${apiUrl}/products/file/${image}`, {
 				method: "DELETE",
 			});
 		} else {
@@ -35,12 +35,9 @@ class Product extends Component {
 	DeleteProduct = async () => {
 		try {
 			if (this.props.match.params.id) {
-				await fetch(
-					`http://localhost:3001/products/${this.props.match.params.id}`,
-					{
-						method: "DELETE",
-					}
-				);
+				await fetch(`${apiUrl}/products/${this.props.match.params.id}`, {
+					method: "DELETE",
+				});
 				this.DeleteProductImage();
 				this.Products();
 			} else {
