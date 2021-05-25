@@ -12,7 +12,7 @@ class Product extends Component {
 		};
 	}
 	Products = async () => {
-		const request = await fetch(`${apiUrl}/products/`);
+		const request = await fetch(`${apiUrl}products/`);
 		const response = await request.json();
 		this.setState({products: response});
 	};
@@ -25,7 +25,7 @@ class Product extends Component {
 		const local = () => "localhost:3001";
 		if (arr.some(local)) {
 			const image = arr[arr.length - 1];
-			await fetch(`${apiUrl}/products/file/${image}`, {
+			await fetch(`${apiUrl}products/file/${image}`, {
 				method: "DELETE",
 			});
 		} else {
@@ -36,7 +36,7 @@ class Product extends Component {
 	DeleteProduct = async () => {
 		try {
 			if (this.props.match.params.id) {
-				await fetch(`${apiUrl}/products/${this.props.match.params.id}`, {
+				await fetch(`${apiUrl}products/${this.props.match.params.id}`, {
 					method: "DELETE",
 				});
 				this.DeleteProductImage();
