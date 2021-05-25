@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import {Container, Col, Card, Row, Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
+const apiUrl = process.env.REACT_APP_BE_URL;
+
 class Product extends Component {
 	constructor(props) {
 		super(props);
@@ -9,7 +11,6 @@ class Product extends Component {
 			products: null,
 		};
 	}
-	apiUrl = process.env.REACT_APP_BE_URL;
 	Products = async () => {
 		const request = await fetch(`${apiUrl}/products/`);
 		const response = await request.json();

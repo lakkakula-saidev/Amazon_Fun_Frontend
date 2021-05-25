@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {Container, Col, Form, Row, Button} from "react-bootstrap";
 
+const apiUrl = process.env.REACT_APP_BE_URL;
+
 class AddProduct extends Component {
 	constructor(props) {
 		super(props);
@@ -9,7 +11,6 @@ class AddProduct extends Component {
 		};
 	}
 
-	apiUrl = process.env.REACT_APP_BE_URL;
 	GetProduct = async () => {
 		try {
 			const request = await fetch(
