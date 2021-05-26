@@ -20,7 +20,7 @@ class AddProduct extends Component {
 	GetProduct = async () => {
 		try {
 			const request = await fetch(
-				`${apiUrl}products/${this.props.match.params.id}`
+				`${apiUrl}/products/${this.props.match.params.id}`
 			);
 			const response = await request.json();
 			this.setState({
@@ -33,7 +33,7 @@ class AddProduct extends Component {
 
 	AddProduct = async () => {
 		try {
-			await fetch(`${apiUrl}products/`, {
+			await fetch(`${apiUrl}/products/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -47,7 +47,7 @@ class AddProduct extends Component {
 
 	UpdateProduct = async () => {
 		try {
-			await fetch(`${apiUrl}products/${this.props.match.params.id}`, {
+			await fetch(`${apiUrl}/products/${this.props.match.params.id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
@@ -61,7 +61,7 @@ class AddProduct extends Component {
 
 	AddFile = async () => {
 		try {
-			const request = await fetch(`${apiUrl}products/upload`, {
+			const request = await fetch(`${apiUrl}/products/upload`, {
 				method: "POST",
 				body: this.state.image,
 			});
