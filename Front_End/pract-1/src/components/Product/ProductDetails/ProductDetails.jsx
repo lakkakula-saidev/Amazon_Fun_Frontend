@@ -20,7 +20,7 @@ class ProductDetails extends Component {
 
 	Product = async () => {
 		const request = await fetch(
-			`${apiUrl}/products/${this.props.match.params.id}`
+			apiUrl + `/products/${this.props.match.params.id}`
 		);
 		const response = await request.json();
 		this.setState({product: response});
@@ -28,7 +28,7 @@ class ProductDetails extends Component {
 
 	Reviews = async () => {
 		const request = await fetch(
-			`${apiUrl}/product/${this.props.match.params.id}/reviews`
+			apiUrl + `/product/${this.props.match.params.id}/reviews`
 		);
 		if (request.ok) {
 			const response = await request.json();
@@ -38,7 +38,7 @@ class ProductDetails extends Component {
 
 	DeleteReview = async () => {
 		const request = await fetch(
-			`${apiUrl}/product/reviews/${this.state.comment_id}`,
+			apiUrl + `/product/reviews/${this.state.comment_id}`,
 			{
 				method: "DELETE",
 			}
@@ -54,7 +54,7 @@ class ProductDetails extends Component {
 	PostReview = async (event) => {
 		event.preventDefault();
 
-		const request = await fetch(`${apiUrl}/product/reviews`, {
+		const request = await fetch(apiUrl + `/product/reviews`, {
 			method: "POST",
 			body: JSON.stringify(this.state.leaveComment),
 			headers: {
