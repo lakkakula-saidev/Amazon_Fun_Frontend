@@ -127,7 +127,6 @@ class AddProduct extends Component {
 
 	handleInputImage = (event) => {
 		event.preventDefault();
-		const urlLink = `${apiUrl}`;
 		const id = event.target.id;
 		const file = event.target.files[0];
 		let form = new FormData();
