@@ -7,14 +7,20 @@ class AddProduct extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			product: {},
+			product: {
+				productName: "",
+				brand: "",
+				model: "",
+				description: "",
+				image: "",
+			},
 		};
 	}
 
 	GetProduct = async () => {
 		try {
 			const request = await fetch(
-				`${apiUrl}products/${this.props.match.params.id}`
+				`${apiUrl}/products/${this.props.match.params.id}`
 			);
 			const response = await request.json();
 			this.setState({
@@ -27,7 +33,7 @@ class AddProduct extends Component {
 
 	AddProduct = async () => {
 		try {
-			await fetch(`${apiUrl}products/`, {
+			await fetch(`${apiUrl}/products/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -41,7 +47,7 @@ class AddProduct extends Component {
 
 	UpdateProduct = async () => {
 		try {
-			await fetch(`${apiUrl}products/${this.props.match.params.id}`, {
+			await fetch(`${apiUrl}/products/${this.props.match.params.id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
@@ -55,10 +61,25 @@ class AddProduct extends Component {
 
 	AddFile = async () => {
 		try {
-			await fetch(`${apiUrl}products/file`, {
+			const request = await fetch(`${apiUrl}/products/upload`, {
 				method: "POST",
 				body: this.state.image,
 			});
+			if (request.ok) {
+				const response = await request.json();
+				this.setState({
+					product: {
+						...this.state.product,
+						image: response.file,
+					},
+				});
+				if (this.props.match.params.id) {
+					this.UpdateProduct();
+				} else {
+					this.AddProduct();
+				}
+				console.log(response.file);
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -70,23 +91,16 @@ class AddProduct extends Component {
 		const file = document.getElementById("image").files.length;
 		if (file > 0) {
 			this.AddFile();
-			if (this.props.match.params.id) {
-				this.UpdateProduct();
-				this.setState({
-					product: {},
-				});
-			} else {
-				this.AddProduct();
-				this.setState({
-					product: {},
-				});
-			}
+		} else if (this.props.match.params.id) {
+			this.UpdateProduct();
+			this.setState({
+				product: {},
+			});
 		} else {
-			if (this.props.match.params.id) {
-				this.UpdateProduct();
-			} else {
-				this.AddProduct();
-			}
+			this.AddProduct();
+			this.setState({
+				product: {},
+			});
 		}
 	};
 
@@ -117,12 +131,12 @@ class AddProduct extends Component {
 		const id = event.target.id;
 		const file = event.target.files[0];
 		let form = new FormData();
-		form.append("image", file);
+		form.append("img", file);
 
 		this.setState({
 			product: {
 				...this.state.product,
-				[id]: urlLink + file.name,
+				// [id]: urlLink + file.name,
 			},
 			[id]: form,
 		});
@@ -202,11 +216,9 @@ class AddProduct extends Component {
 									placeholder="Enter product image url"
 								/>
 							</Form.Group>
-								<Button className="m-2" variant="primary" type="submit">
-									{this.props.match.params.id
-										? "Update Product"
-										: "Add Product"}
-								</Button>
+							<Button className="m-2" variant="primary" type="submit">
+								{this.props.match.params.id ? "Update Product" : "Add Product"}
+							</Button>
 						</Form>
 					</Col>
 				</Row>
