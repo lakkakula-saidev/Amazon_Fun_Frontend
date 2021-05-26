@@ -135,7 +135,6 @@ class AddProduct extends Component {
 		this.setState({
 			product: {
 				...this.state.product,
-				// [id]: urlLink + file.name,
 			},
 			[id]: form,
 		});
