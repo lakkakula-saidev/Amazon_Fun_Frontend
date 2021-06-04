@@ -2,6 +2,7 @@
 import { Component } from 'react'
 import { Navbar, Nav, Form, FormControl } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
+import Cart from '../CartModel/Cart.jsx'
 
 
 class TopNavbar extends Component{
@@ -21,7 +22,8 @@ class TopNavbar extends Component{
 									type="text"
 									placeholder="Search"
 									className="me-sm-2"
-								/>
+						/>
+						<Cart />
 							</Form>
 						</Navbar.Collapse>
 					</Navbar>
