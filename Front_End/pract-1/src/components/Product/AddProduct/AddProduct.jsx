@@ -1,20 +1,39 @@
 import React, { Component } from "react";
-import { Container, Col, Form, Row, Button } from "react-bootstrap";
+import { Container, Col, Form, Row, Button, Spinner } from "react-bootstrap";
 import Post from "../../CRUD/PostProduct.js";
+import { Redirect } from "react-router-dom";
+import { GetQuery, Get } from "../../CRUD/GetProducts.js";
+import FormDataPost from "../../CRUD/FormDataPost.js";
+
 const apiUrl = process.env.REACT_APP_BE_URL;
 
 class AddProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: true,
             product: {
                 name: "",
                 brand: "",
                 price: "",
-                description: ""
-                /* image: "" */
-            }
+                description: "",
+                CategoryId: ""
+            },
+            selectedCategory: "",
+            allCategories: null,
+            Cover: null
         };
+    }
+    async componentDidMount() {
+        const category = await Get("category");
+        this.setState({ allCategories: category, isLoading: false });
+        console.log(this.state.allCategories);
+        this.HandleSetting();
+    }
+
+    ImageHandle(e) {
+        const files = e.target.files[0];
+        return files;
     }
 
     GetProduct = async () => {
@@ -107,20 +126,31 @@ class AddProduct extends Component {
             this.GetProduct();
         }
     };
-    componentDidMount() {
-        this.HandleSetting();
-    }
 
     handleInputChange = (event) => {
         const id = event.target.id;
         const value = event.target.value;
+        const category = this.state.allCategories.filter((item) => item.name.includes(value));
+        console.log(category);
+        if (id === "selectedCategory") {
+            this.setState({
+                [id]: value._id
+            });
 
-        this.setState({
-            product: {
-                ...this.state.product,
-                [id]: value
-            }
-        });
+            this.setState({
+                product: {
+                    ...this.state.product,
+                    CategoryId: category[0]._id
+                }
+            });
+        } else {
+            this.setState({
+                product: {
+                    ...this.state.product,
+                    [id]: value
+                }
+            });
+        }
     };
 
     handleInputImage = (event) => {
@@ -140,56 +170,73 @@ class AddProduct extends Component {
 
     async postData(e) {
         e.preventDefault();
+
         let Value = !Object.values(this.state.product).some((element) => element === null);
         if (Value) {
             let response = await Post("products", this.state.product);
             console.log("Data is posted, Cover is yet to be....");
-            /* if (this.state.blogPostCover !== null) {
+            if (this.state.Cover !== null) {
                 response = await response.json();
                 let formData = new FormData();
-                formData.append("uploadCover", this.state.blogPostCover);
+                formData.append("cover", this.state.Cover);
                 let _id = response._id;
-                const post_truthy = await FormDataPost(formData, _id, "blogPosts", "uploadCover");
-            } */
+                const post_truthy = await FormDataPost(formData, _id, "products", "uploadCover");
+                if (post_truthy) {
+                    alert("Your product is saved");
+                    this.props.history.push("/");
+                } else {
+                    alert("Product addition Failed!!!!");
+                }
+            }
         }
     }
 
     render() {
         console.log(this.state.product);
+        const allCategories = this.state.allCategories;
         return (
             <Container>
                 <Row className="mt-3 mb-5">
-                    <Col sm={10} md={7} className="m-auto border border-success p-5">
-                        <Form onSubmit={(e) => this.postData(e)}>
-                            <Form.Group controlId="name" className="d-flex justify-content-between mb-2">
-                                <Form.Label>Product Name</Form.Label>
-                                <Form.Control value={this.state.product.productName} onChange={this.handleInputChange} className="w-50" type="text" placeholder="Enter product name" />
-                            </Form.Group>
+                    {this.state.isLoading && <Spinner animation="border" variant="primary" />}
+                    {!this.state.isLoading && (
+                        <Col sm={10} md={7} className="m-auto border border-success p-5">
+                            <Form onSubmit={(e) => this.postData(e)}>
+                                <Form.Group controlId="name" className="d-flex justify-content-between mb-2">
+                                    <Form.Label>Product Name</Form.Label>
+                                    <Form.Control value={this.state.product.name} onChange={this.handleInputChange} className="w-50" type="text" placeholder="Enter product name" />
+                                </Form.Group>
 
-                            <Form.Group controlId="brand" className="d-flex justify-content-between mb-2">
-                                <Form.Label>Product brand</Form.Label>
-                                <Form.Control value={this.state.product.brand} onChange={this.handleInputChange} className="w-50" type="text" placeholder="Enter product brand" />
-                            </Form.Group>
+                                <Form.Group controlId="brand" className="d-flex justify-content-between mb-2">
+                                    <Form.Label>Product brand</Form.Label>
+                                    <Form.Control value={this.state.product.brand} onChange={this.handleInputChange} className="w-50" type="text" placeholder="Enter product brand" />
+                                </Form.Group>
 
-                            <Form.Group controlId="price" className="d-flex justify-content-between mb-2">
-                                <Form.Label>Product Price</Form.Label>
-                                <Form.Control value={this.state.product.price} type="number" onChange={this.handleInputChange} className="w-50" placeholder="Enter product price" />
-                            </Form.Group>
+                                <Form.Group controlId="price" className="d-flex justify-content-between mb-2">
+                                    <Form.Label>Product Price</Form.Label>
+                                    <Form.Control value={this.state.product.price} type="number" onChange={this.handleInputChange} className="w-50" placeholder="Enter product price" />
+                                </Form.Group>
+                                <Form.Group controlId="price" className="d-flex justify-content-between mb-2">
+                                    <Form.Label>Category</Form.Label>
+                                    <Form.Control id="selectedCategory" value={this.state.product.CategoryId} onChange={this.handleInputChange} size="sm" as="select">
+                                        {allCategories && allCategories.length > 0 ? allCategories.map((category) => <option>{category.name}</option>) : <></>}
+                                    </Form.Control>
+                                </Form.Group>
 
-                            <Form.Group className="d-flex justify-content-between mb-2" controlId="description">
-                                <Form.Label>Product Description</Form.Label>
-                                <Form.Control value={this.state.product.description} onChange={this.handleInputChange} className="w-50" type="text" placeholder="Enter product description" />
-                            </Form.Group>
+                                <Form.Group className="d-flex justify-content-between mb-2" controlId="description">
+                                    <Form.Label>Product Description</Form.Label>
+                                    <Form.Control value={this.state.product.description} onChange={this.handleInputChange} className="w-50" type="text" placeholder="Enter product description" />
+                                </Form.Group>
 
-                            <Form.Group className="d-flex justify-content-between mb-2" controlId="image">
-                                <Form.Label>Image</Form.Label>
-                                <Form.Control onChange={this.handleInputImage} className="w-75" type="file" placeholder="Enter product image url" />
-                            </Form.Group>
-                            <Button className="m-2" variant="primary" type="submit">
-                                {this.props.match.params.id ? "Update Product" : "Add Product"}
-                            </Button>
-                        </Form>
-                    </Col>
+                                <Form.Group className="d-flex justify-content-between mb-2" controlId="image">
+                                    <Form.Label>Image</Form.Label>
+                                    <Form.Control className="w-75" onChange={(e) => this.setState({ Cover: this.ImageHandle(e) })} type="file" placeholder="Enter product image url" />
+                                </Form.Group>
+                                <Button className="m-2" variant="primary" type="submit">
+                                    {this.props.match.params.id ? "Update Product" : "Add Product"}
+                                </Button>
+                            </Form>
+                        </Col>
+                    )}
                 </Row>
             </Container>
         );

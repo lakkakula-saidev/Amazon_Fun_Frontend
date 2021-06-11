@@ -1,4 +1,4 @@
-const Get = async (str1) => {
+export const Get = async (str1) => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const endpoint = `${apiUrl}/${str1}`;
     let response;
@@ -27,7 +27,3 @@ export const GetQuery = async (str1, queryStr) => {
         console.log(error);
     }
 };
-
-
-export default Get
-
